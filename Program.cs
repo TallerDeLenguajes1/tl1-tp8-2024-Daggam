@@ -43,25 +43,24 @@ Empleado crearEmpleado(){
     return new Empleado(nombre,apellido,fecha_de_nacimiento,estado_civil,fecha_de_ingreso,sueldo,cargo);
 }
 
+var empleados = new List<Empleado>(3);
 
-//Creamos 3 empleados
-var empleados = new Empleado[3];
 for (int i = 0; i < 3; i++)
 {
-    empleados[i] = crearEmpleado();
+    empleados.Add(crearEmpleado()); 
+    Console.WriteLine("--------------");
 }
-
-double SalarioTotal = empleados[0].Salario();
-Empleado proximoAJubilarse = empleados[0];
-for (int i = 1; i < 3; i++)
+double salarioTotal = 0;
+Empleado proximoAJubilarse = null;
+foreach (Empleado e in empleados)
 {
-    SalarioTotal+=empleados[i].Salario();
-    if(proximoAJubilarse.JubilacionContador() > empleados[i].JubilacionContador()){
-        proximoAJubilarse = empleados[i];
-        
+    salarioTotal += e.Salario();
+    //C# tiene shortcircuit
+    if(proximoAJubilarse == null || proximoAJubilarse.JubilacionContador() > e.JubilacionContador()){
+        proximoAJubilarse = e;
     }
 }
 
-Console.WriteLine("El total de salarios a pagar es " + SalarioTotal.ToString("N",CultureInfo.CreateSpecificCulture("es-ES")));
+Console.WriteLine("El total de salarios a pagar es " + salarioTotal.ToString("N",CultureInfo.CreateSpecificCulture("es-ES")));
 Console.WriteLine("Empleado proximo a jubilarse es: ");
 proximoAJubilarse.MostrarDatos();
