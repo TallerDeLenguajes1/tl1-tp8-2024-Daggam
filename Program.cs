@@ -1,66 +1,56 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Globalization;
-using EmpleadoNamespace;
-
-Empleado crearEmpleado(){
-    //Nombre
-    Console.WriteLine("Ingrese el nombre del empleado: ");
-    string nombre = Console.ReadLine().Trim();
-    //Apellido
-    Console.WriteLine("Ingrese el apellido del empleado: ");
-    string apellido = Console.ReadLine().Trim();
-    //Fecha de nacimiento
-    Console.WriteLine("Ingrese la fecha de nacimiento: (formato dd/MM/yyyy)");
-    DateTime fecha_de_nacimiento;
-    while(!DateTime.TryParseExact(Console.ReadLine(),"dd/MM/yyyy",null,System.Globalization.DateTimeStyles.None,out fecha_de_nacimiento)){
-        Console.WriteLine("La fecha ingresada no es válida. Ingrese la fecha con el formato correcto. dd/MM/yyyy");
+﻿using TareaNamespace;
+//Funciones
+List<Tarea> crearTareasPendientes(int cantidad){ 
+    Random rnd = new();
+    List<Tarea> tareasPendientes = new List<Tarea>();
+    string[] descripciones = {
+        "lorem1","lorem1","lorem1","lorem1","lorem1"
+    };
+    for (int i = 0; i < cantidad; i++)
+    {
+        Tarea nuevaTarea = new Tarea(descripciones.GetValue(rnd.Next(descripciones.Length)).ToString(),rnd.Next(100));
+        tareasPendientes.Add(nuevaTarea);
     }
-    //Estado civil
-    Console.WriteLine("Ingrese el estado civil: ('S':Soltero; 'C':Casado; 'V':Viudo; 'D': Divorciado)");
-    char estado_civil;
-    while(!char.TryParse(Console.ReadLine(),out estado_civil) || (estado_civil !='S' && estado_civil !='C' && estado_civil !='V' && estado_civil !='D')){
-        Console.WriteLine("Ingrese una opción válida.");
-    }
-    //Fecha de ingreso a la empresa.
-    Console.WriteLine("Ingrese la fecha de ingreso a la empresa: (formato dd/MM/yyyy)");
-    DateTime fecha_de_ingreso;
-    while(!DateTime.TryParseExact(Console.ReadLine(),"dd/MM/yyyy",null,System.Globalization.DateTimeStyles.None,out fecha_de_ingreso)){
-        Console.WriteLine("La fecha ingresada no es válida. Ingrese la fecha con el formato correcto. dd/MM/yyyy");
-    }
-    //Sueldo básico
-    double sueldo;
-    Console.WriteLine("Ingrese el sueldo básico del empleado: ");
-    while(!double.TryParse(Console.ReadLine(),out sueldo) || sueldo < 234315.12d){
-        Console.WriteLine("Ingrese un sueldo básico válido");
-    }
-    //Cargo
-    Cargos cargo;
-    Console.WriteLine("Ingrese el cargo del Empleado: (Auxiliar, Administrativo, Ingeniero, Especialista, Investigador)");
-    while(!Enum.TryParse<Cargos>(Console.ReadLine(),out cargo)){
-        Console.WriteLine("Error. Ingrese una de las opciones válidas.");
-    }
-
-    return new Empleado(nombre,apellido,fecha_de_nacimiento,estado_civil,fecha_de_ingreso,sueldo,cargo);
+    return tareasPendientes;
 }
 
-var empleados = new List<Empleado>(3);
-
-for (int i = 0; i < 3; i++)
-{
-    empleados.Add(crearEmpleado()); 
-    Console.WriteLine("--------------");
-}
-double salarioTotal = 0;
-Empleado proximoAJubilarse = null;
-foreach (Empleado e in empleados)
-{
-    salarioTotal += e.Salario();
-    //C# tiene shortcircuit
-    if(proximoAJubilarse == null || proximoAJubilarse.JubilacionContador() > e.JubilacionContador()){
-        proximoAJubilarse = e;
+void moverTarea(List<Tarea> tareasPendientes, List<Tarea> tareasRealizadas,int id){
+    //Ver single.
+    if(tareasPendientes.Count != 0 && tareasPendientes.Exists( e => e.TareaID == id)){
+        
+    }else{
+        Console.WriteLine("La tarea ingresada no es válida");
     }
 }
 
-Console.WriteLine("El total de salarios a pagar es " + salarioTotal.ToString("N",CultureInfo.CreateSpecificCulture("es-ES")));
-Console.WriteLine("Empleado proximo a jubilarse es: ");
-proximoAJubilarse.MostrarDatos();
+
+
+Console.WriteLine("Introduce la cantidad de tareas pendientes");
+int cantidad;
+while(!int.TryParse(Console.ReadLine(),out cantidad)){
+    Console.WriteLine("El valor ingresado no es válido");
+}
+List<Tarea> tareasPendientes = crearTareasPendientes(cantidad);
+List<Tarea> tareasRealizadas = new List<Tarea>();
+
+while(true){
+    Console.WriteLine("Ingrese una de las opciones:");
+    Console.WriteLine("1. Mover tareas pendientes");
+    Console.WriteLine("2. Buscar tareas pendiente por descripción.");
+    int opciones;
+    if(int.TryParse(Console.ReadLine(),out opciones)) {
+        switch(opciones){
+            case 1:
+                Console.WriteLine("Ingrese un id de tarea.");
+                int idTarea;
+                if(int.TryParse(Console.ReadLine(),out idTarea)){
+                    moverTarea(tareasPendientes,tareasRealizadas,idTarea);
+                }else{
+                    Console.WriteLine("La tarea no existe.");
+                }
+                break;
+        }
+    } else {
+        Console.WriteLine("El valor ingresado no es válido.");
+    }
+}
